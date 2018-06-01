@@ -1,0 +1,6 @@
+=== 1.0.0 / 2018-06-01
+
+* 1 major enhancement
+
+  * Birthday!
+
