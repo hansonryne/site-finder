@@ -1,6 +1,6 @@
-require './sitefind/target'
-require './sitefind/options'
-require './sitefind/finder'
+require_relative 'sitefind/target'
+require_relative 'sitefind/options'
+require_relative 'sitefind/finder'
 
 module SITEFIND
   class << self
