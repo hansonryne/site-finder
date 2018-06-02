@@ -1,7 +1,9 @@
 require_relative 'target'
-require 'csv'
-require 'concurrent'
 require_relative 'options'
+require 'csv'
+require 'yaml'
+require 'oj'
+require 'concurrent'
 
 module SITEFIND
   class Finder
@@ -13,8 +15,8 @@ module SITEFIND
     def run
       tgts = []
 
-      if @options["file"]
-        CSV.readlines(@options["file"]).each do |t|
+      if @options["tgt_file"]
+        CSV.readlines(@options["tgt_file"]).each do |t|
           tgts << SITEFIND::Target.new(t[0])
         end
       end
@@ -49,8 +51,39 @@ module SITEFIND
       pool.shutdown
       pool.wait_for_termination(60)
 
-      puts "Writing results to file"
-      
+      if @options["json_output"]
+        puts "Writing to json file: #{@options["output_file"]}.json"
+        File.open("#{@options["output_file"]}.json", "w") do |f|
+          tgts.each do |t|
+            f.puts Oj::dump t, indent: 2
+          end
+        end
+      end
+
+      if @options["yaml_output"]
+        puts "Writing to yaml file: #{@options["output_file"]}.yaml"
+        File.open("#{@options["output_file"]}.yaml", "w") do |f|
+          tgts.each do |t|
+            f.puts t.to_yaml
+          end
+        end
+      end
+
+      if @options["csv_output"]
+        puts "Writing to csv file: #{@options["output_file"]}.csv"
+        File.open("#{@options["output_file"]}.csv", "w") do |csv|
+          headers = %w(target ip site status upgrade http https)
+          csv << headers.join(",")
+          csv << "\n"
+          tgts.each do |t|
+            val_arr = [t.start_address,t.ip_address,t.end_address,t.code_trail[-1],t.ssl_upgrade,t.http_success,t.https_success]
+            csv << val_arr.join(",")
+            csv << "\n"
+          end
+        end
+      end
+
+=begin
       tgts.each do |t|
         if t.http_success or t.https_success
           puts "Looking at: #{t.start_address}"
@@ -59,6 +92,7 @@ module SITEFIND
           puts ""
         end
       end
+=end
 
     end
 

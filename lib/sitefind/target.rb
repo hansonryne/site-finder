@@ -1,13 +1,14 @@
 require 'http'
 require 'net/http'
 require 'resolv'
+require 'yaml'
 
 module SITEFIND
   class Target
 
     REDIRECT_CODES = [300, 301, 302, 303, 307, 308].to_set.freeze
 
-    attr_reader :errors, :code_trail, :ip_address, :http_success, :https_success, :start_address, :end_address
+    attr_reader :errors, :ssl_upgrade, :code_trail, :ip_address, :http_success, :https_success, :start_address, :end_address
 
     def initialize(server)
       @start_address = server.to_s
@@ -140,5 +141,10 @@ module SITEFIND
       self.find_https_site
     end
 
+    def output_target(data)
+#      serialized = self.to_yaml
+#      File.open(file, "a") do |f|
+#        f.puts serialized
+    end
   end
 end
