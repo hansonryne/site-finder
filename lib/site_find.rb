@@ -14,3 +14,4 @@ module SITEFIND
 end
 
 SITEFIND.run(ARGV)
+print "\a"
